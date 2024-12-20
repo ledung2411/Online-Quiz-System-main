@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
@@ -12,7 +13,6 @@ const ImportQuestions = () => {
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    // console.log("selectedFile", selectedFile)
     if (
       selectedFile?.type !==
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -35,9 +35,51 @@ const ImportQuestions = () => {
         const jsonData = XLSX.utils.sheet_to_json(worksheet, {
           header: 1,
           defval: "",
+          raw: false
         });
-        console.log("Preview data1:", jsonData.slice(1)); // Log the preview data
-        setPreviewData(jsonData.slice(1));
+
+        // Lấy userId từ localStorage
+        const token = localStorage.getItem('accessToken');
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.id;
+
+        // Thêm cột createdBy vào header
+        const headers = [...jsonData[0]];
+        if (!headers.includes('createdBy')) {
+          headers.push('createdBy');
+        }
+
+        // Xử lý dữ liệu và thêm userId vào mỗi dòng
+        const processedData = jsonData.slice(1).map(row => {
+          let newRow = [...row];
+
+          // Xử lý cột options (index 1)
+          // Xử lý cột options (index 1)
+          // Xử lý cột options (index 1)
+          // Xử lý cột options (index 1)
+          if (newRow[1]) {
+            try {
+              // Parse chuỗi JSON để lấy object
+              const parsedOptions = JSON.parse(newRow[1]);
+
+              // Chuyển object thành chuỗi JSON không có escape characters
+              newRow[1] = JSON.stringify(parsedOptions);
+
+            } catch (err) {
+              console.error("Error processing options:", err);
+            }
+          }
+
+
+
+          return [...newRow, userId];
+        });
+
+        // Kết hợp header và data
+        const finalData = [headers, ...processedData];
+
+        console.log("Preview data:", finalData);
+        setPreviewData(finalData);
       } catch (error) {
         console.error("Error reading Excel file:", error);
         setError("Failed to read Excel file");
@@ -274,15 +316,25 @@ const ImportQuestions = () => {
                             {row[0]}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                            {JSON.parse(row[1])
-                              .map(
-                                (option) =>
-                                  `${option.text} (${
-                                    option.isCorrect ? "Correct" : "Incorrect"
-                                  })`
-                              )
-                              .join(", ")}
+                            {
+                              // Kiểm tra xem row[1] có phải là chuỗi hợp lệ để parse không
+                              (() => {
+                                try {
+                                  const parsedOptions = JSON.parse(row[1]);
+                                  return parsedOptions
+                                    .map(
+                                      (option) =>
+                                        `${option.text} (${option.isCorrect ? "Correct" : "Incorrect"})`
+                                    )
+                                    .join(", ");
+                                } catch (error) {
+                                  console.error("Error parsing JSON:", error);
+                                  return "Invalid options data"; // Hiển thị thông báo lỗi hoặc dữ liệu mặc định
+                                }
+                              })() // Đảm bảo có dấu ngoặc để thực thi hàm ngay lập tức
+                            }
                           </td>
+
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                             {row[4]}
                           </td>
