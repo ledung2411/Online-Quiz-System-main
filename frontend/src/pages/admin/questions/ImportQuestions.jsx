@@ -36,7 +36,7 @@ const ImportQuestions = () => {
           header: 1,
           defval: "",
         });
-        console.log("Preview data:", jsonData.slice(1)); // Log the preview data
+        console.log("Preview data1:", jsonData.slice(1)); // Log the preview data
         setPreviewData(jsonData.slice(1));
       } catch (error) {
         console.error("Error reading Excel file:", error);
@@ -273,8 +273,7 @@ const ImportQuestions = () => {
                             {JSON.parse(row[1])
                               .map(
                                 (option) =>
-                                  `${option.text} (${
-                                    option.isCorrect ? "Correct" : "Incorrect"
+                                  `${option.text} (${option.isCorrect ? "Correct" : "Incorrect"
                                   })`
                               )
                               .join(", ")}
