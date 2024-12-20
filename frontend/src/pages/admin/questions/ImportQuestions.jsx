@@ -95,9 +95,13 @@ const ImportQuestions = () => {
   };
 
   const downloadTemplate = () => {
-    // In a real application, this would download a template Excel file
-    // The template should include columns: text, options, category, difficulty, points, timeLimit, explanation
-    alert("Template download would start here");
+    const fileId = "1pK3mUjPzY5S1qHmj8k_T1hul7htFtErM"; // Lấy ID từ URL Google Drive
+    const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = "Template_Question.xlsx";
+    link.click();
   };
 
   const getResultSummary = () => {
@@ -273,7 +277,8 @@ const ImportQuestions = () => {
                             {JSON.parse(row[1])
                               .map(
                                 (option) =>
-                                  `${option.text} (${option.isCorrect ? "Correct" : "Incorrect"
+                                  `${option.text} (${
+                                    option.isCorrect ? "Correct" : "Incorrect"
                                   })`
                               )
                               .join(", ")}
