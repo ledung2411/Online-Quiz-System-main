@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import HostView from "./HostView";
 
 const socket = io("http://localhost:5000");
 
 const StudentCamera = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [connectionStatus, setConnectionStatus] = useState("connecting");
 
   useEffect(() => {
@@ -26,14 +27,40 @@ const StudentCamera = () => {
     };
   }, [id]);
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <div className="max-w-4xl mx-auto space-y-4">
+    <div className="min-h-screen bg-gray-100">
+      <div className="container mx-auto px-6 py-8">
+        {/* Back Button */}
+        <button
+          onClick={handleBack}
+          className="mb-6 flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          <span className="text-lg font-medium">Back</span>
+        </button>
+
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-md p-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            {/* Simple camera icon using HTML/CSS */}
-            <div className="w-6 h-6 text-blue-500">
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            {/* Camera icon with larger size */}
+            <div className="w-10 h-10 text-blue-600">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -48,13 +75,15 @@ const StudentCamera = () => {
                 />
               </svg>
             </div>
-            <h1 className="text-xl font-semibold">Student Camera View</h1>
+            <h1 className="text-2xl font-bold text-gray-800">
+              Student Camera View
+            </h1>
           </div>
 
-          <div className="flex items-center space-x-2">
-            {/* Simple wifi icon using HTML/CSS */}
+          <div className="flex items-center space-x-4">
+            {/* Connection status with larger icon */}
             <div
-              className={`w-5 h-5 ${
+              className={`w-8 h-8 ${
                 connectionStatus === "connected"
                   ? "text-green-500"
                   : connectionStatus === "disconnected"
@@ -76,17 +105,19 @@ const StudentCamera = () => {
                 />
               </svg>
             </div>
-            <span className="text-sm text-gray-600">Room ID: {id}</span>
+            <span className="text-lg font-medium text-gray-700">
+              Room ID: {id}
+            </span>
           </div>
         </div>
 
         {/* Connection Status Alert */}
         {connectionStatus === "disconnected" && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-            <div className="flex">
+          <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg mb-8">
+            <div className="flex items-center">
               <div className="flex-shrink-0">
                 <svg
-                  className="h-5 w-5 text-red-500"
+                  className="h-6 w-6 text-red-500"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
@@ -98,8 +129,8 @@ const StudentCamera = () => {
                   />
                 </svg>
               </div>
-              <div className="ml-3">
-                <p className="text-sm text-red-700">
+              <div className="ml-4">
+                <p className="text-base text-red-700">
                   Connection lost. Attempting to reconnect...
                 </p>
               </div>
@@ -108,7 +139,7 @@ const StudentCamera = () => {
         )}
 
         {/* Main Content */}
-        <div className="bg-white rounded-lg shadow-md p-4">
+        <div className="bg-white rounded-xl shadow-lg p-8">
           <HostView socket={socket} roomId={id} />
         </div>
       </div>

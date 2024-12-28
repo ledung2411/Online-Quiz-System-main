@@ -74,8 +74,6 @@ const HostView = ({ socket, roomId }) => {
   };
   useEffect(() => {
     const handleUserBlur = ({ userId, userName }) => {
-      console.log("hoang ngu", userId, userName);
-
       setViolateUserArray((prevArray) => {
         const isUserInArray = prevArray.some((id) => id === userId);
         if (isUserInArray) {
@@ -219,6 +217,13 @@ const HostView = ({ socket, roomId }) => {
 
                 {/* User Info Overlay */}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                  {violateUserArray.some((id) => id === peer.userId) ? (
+                    <div className="absolute w-full h-8 bg-red-500 opacity-25 flex justify-center items-center left-0 bottom-16">
+                      {peer.username} đã vi phạm
+                    </div>
+                  ) : (
+                    <></>
+                  )}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">

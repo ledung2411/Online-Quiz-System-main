@@ -35,22 +35,22 @@ const ImportQuestions = () => {
         const jsonData = XLSX.utils.sheet_to_json(worksheet, {
           header: 1,
           defval: "",
-          raw: false
+          raw: false,
         });
 
         // Lấy userId từ localStorage
-        const token = localStorage.getItem('accessToken');
+        const token = localStorage.getItem("accessToken");
         const decodedToken = jwtDecode(token);
         const userId = decodedToken.id;
 
         // Thêm cột createdBy vào header
         const headers = [...jsonData[0]];
-        if (!headers.includes('createdBy')) {
-          headers.push('createdBy');
+        if (!headers.includes("createdBy")) {
+          headers.push("createdBy");
         }
 
         // Xử lý dữ liệu và thêm userId vào mỗi dòng
-        const processedData = jsonData.slice(1).map(row => {
+        const processedData = jsonData.slice(1).map((row) => {
           let newRow = [...row];
 
           // Xử lý cột options (index 1)
@@ -64,13 +64,10 @@ const ImportQuestions = () => {
 
               // Chuyển object thành chuỗi JSON không có escape characters
               newRow[1] = JSON.stringify(parsedOptions);
-
             } catch (err) {
               console.error("Error processing options:", err);
             }
           }
-
-
 
           return [...newRow, userId];
         });
@@ -290,19 +287,19 @@ const ImportQuestions = () => {
                           Options
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Points
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Category
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          ClassID
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Difficulty
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Points
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Time Limit
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Explanation
+                          CreatedBy
                         </th>
                       </tr>
                     </thead>
@@ -324,7 +321,11 @@ const ImportQuestions = () => {
                                   return parsedOptions
                                     .map(
                                       (option) =>
-                                        `${option.text} (${option.isCorrect ? "Correct" : "Incorrect"})`
+                                        `${option.text} (${
+                                          option.isCorrect
+                                            ? "Correct"
+                                            : "Incorrect"
+                                        })`
                                     )
                                     .join(", ");
                                 } catch (error) {
